@@ -1,43 +1,74 @@
+using System.Security.Claims;
 using Data;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
-using Sprache;
 
 namespace Routes
 {
   class AgendaRoute
   {
     public static async Task<IResult> CreateAgendamento(
-      [FromServices] ConsultorioDbContext db, 
+      [FromServices] ConsultorioDbContext db,
+      ClaimsPrincipal user,
       DateTime data_hora,
-      int service_id,
-      int user_id
+      int service_id
     )
     {
-      Agenda agenda = new Agenda { 
+      var busy = await db.agenda.AnyAsync(a => a.data_hora == data_hora && a.service_id == service_id);
+      if (busy) return Results.BadRequest("Horário indisponível");
+
+      var service = await db.services.FindAsync(service_id);
+      if (service is null) return Results.NotFound("Serviço inexistente");
+
+      if (data_hora <= DateTime.Now) return Results.BadRequest("Data inválida");
+
+      var endOfService = data_hora.AddMinutes(service.duracao_min);
+      var conflict = await db.agenda.AnyAsync(a =>
+        a.service_id == service_id &&
+        a.data_hora < endOfService &&
+        a.data_hora.AddMinutes(a.duracao_min) > data_hora
+      );
+      if (conflict) return Results.BadRequest("Já existe um serviço agendado neste horário");
+
+      Agenda agendamento = new Agenda
+      {
         data_hora = data_hora,
         service_id = service_id,
-        user_id = user_id
+        user_id = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)!.Value),
+        duracao_min = service.duracao_min,
       };
 
-      db.Add(agenda);
+      db.Add(agendamento);
       await db.SaveChangesAsync();
 
-      return Results.NoContent();
+      return Results.Created($"/agendamento/{agendamento.id}", agendamento);
     }
 
-    public static async Task<IResult> GetAllAgendamentos([FromServices] ConsultorioDbContext db)
+    public static async Task<IResult> GetAllAgendamentos(
+      [FromServices] ConsultorioDbContext db,
+      ClaimsPrincipal user
+    )
     {
       var agendamentos = await db.agenda
         .OrderByDescending(agendamento => agendamento.data_hora)
         .ToListAsync();
 
+      if (!VerifyRole.IsAdmin(user))
+      {
+        var userId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        agendamentos = agendamentos
+          .Where(agendamento => agendamento.user_id == userId)
+          .ToList();
+      }
+
       return Results.Ok(agendamentos);
     }
 
     public static async Task<IResult> GetAgendamentoByUser(
-      [FromServices] ConsultorioDbContext db, 
+      [FromServices] ConsultorioDbContext db,
       int user_id
     )
     {
@@ -50,7 +81,7 @@ namespace Routes
     }
 
     public static async Task<IResult> GetAgendamentoByService(
-      [FromServices] ConsultorioDbContext db, 
+      [FromServices] ConsultorioDbContext db,
       int service_id
     )
     {
@@ -63,7 +94,7 @@ namespace Routes
     }
 
     public static async Task<IResult> GetAgendamentosByDate(
-      [FromServices] ConsultorioDbContext db, 
+      [FromServices] ConsultorioDbContext db,
       DateTime date
     )
     {
@@ -82,7 +113,7 @@ namespace Routes
     }
 
     public static async Task<IResult> ChangeDateTimeAgendamento(
-      [FromServices] ConsultorioDbContext db, 
+      [FromServices] ConsultorioDbContext db,
       int id,
       DateTime new_date
     )
@@ -91,8 +122,21 @@ namespace Routes
 
       if (agendamento is null) return Results.NotFound("Agendamento não encontrado");
 
-      bool ocupado = await db.agenda.AnyAsync(agendamento => agendamento.data_hora == new_date);
-      if (ocupado) return Results.BadRequest("Horário não disponível");
+      var endOfService = new_date.AddMinutes(agendamento.duracao_min);
+
+      var conflict = await db.agenda
+        .Include(a => a.duracao_min)
+        .AnyAsync(a =>
+          a.id != id &&
+          a.service_id == agendamento.service_id &&
+          a.data_hora < endOfService &&
+          a.data_hora.AddMinutes(a.duracao_min) > new_date
+        );
+
+      var service = await db.services.FindAsync(agendamento.service_id);
+      if (service is null) return Results.NotFound("Serviço inexistente");
+
+      if (new_date <= DateTime.Now) return Results.BadRequest("Data inválida");
 
       agendamento.data_hora = new_date;
       await db.SaveChangesAsync();
@@ -101,10 +145,16 @@ namespace Routes
     }
 
     public static async Task<IResult> DeleteAgendamento(
-      [FromServices] ConsultorioDbContext db, 
+      [FromServices] ConsultorioDbContext db,
+      ClaimsPrincipal user,
       int id
     )
     {
+      var userId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+      var agendamento = await db.agenda.FindAsync(id);
+
+      if (agendamento?.user_id != userId && !VerifyRole.IsAdmin(user)) return Results.Forbid();
+
       var linhasAfetadas = await db.agenda
         .Where(a => a.id == id)
         .ExecuteDeleteAsync();

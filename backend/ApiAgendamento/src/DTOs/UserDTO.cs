@@ -1,5 +1,6 @@
 namespace DTOs
 {
-  public record UserDTO(string Nome, string Password, string Telefone, string Email);
+  public record CreateUserDTO(string Nome, string Password, string Telefone, string Email);
+  public record LoginUserDTO(string Email, string Password);
 
 }

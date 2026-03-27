@@ -1,5 +1,8 @@
+using System.Security.Claims;
+using Constants;
 using Data;
 using DTOs;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
@@ -29,9 +32,13 @@ namespace Routes
 
     public static async Task<IResult> CreateService(
       [FromServices] ConsultorioDbContext db, 
-      [FromBody] CreateServiceDTO dto
+      [FromBody] CreateServiceDTO dto,
+      ClaimsPrincipal user
     )
     {
+      var roleVerify = VerifyRole.IsAdmin(user);
+      if(!roleVerify) return Results.Forbid();
+
       Service service = new Service
       {
         nome = dto.Nome,
@@ -43,23 +50,27 @@ namespace Routes
       db.Add(service);
       await db.SaveChangesAsync();
 
-      return Results.Ok(service);
+      return Results.Created($"/services/{service.id}", service);
     }
 
     public static async Task<IResult> UpdateService(
       [FromServices] ConsultorioDbContext db, 
       [FromBody] GetServiceDTO dto,
+      ClaimsPrincipal user,
       int id
     )
     {
+      var roleVerify = VerifyRole.IsAdmin(user);
+      if(!roleVerify) return Results.Forbid();
+
       var service = await db.services.FindAsync(id);
 
       if(service is null) return Results.NotFound("Serviço não encontrado");
       
-      service.nome = dto.Nome;
-      service.descricao = dto.Descricao;
-      service.preco = dto.Preco;
-      service.duracao_min = dto.Duracao_min;
+      if(!string.IsNullOrWhiteSpace(dto.Nome)) service.nome = dto.Nome;
+      if(!string.IsNullOrWhiteSpace(dto.Descricao))service.descricao = dto.Descricao;
+      if(dto.Preco > 0) service.preco = dto.Preco;
+      if(dto.Duracao_min > 0) service.duracao_min = dto.Duracao_min;
 
       await db.SaveChangesAsync();
 
@@ -68,13 +79,18 @@ namespace Routes
 
     public static async Task<IResult> DeleteService(
       [FromServices] ConsultorioDbContext db, 
-      [FromBody] GetServiceDTO dto,
+      ClaimsPrincipal user,
       int id
     )
     {
-      await db.services
+      var roleVerify = VerifyRole.IsAdmin(user);
+      if(!roleVerify) return Results.Forbid();
+
+      var linhasAfetadas = await db.services
       .Where(service => service.id == id)
       .ExecuteDeleteAsync();
+
+      if(linhasAfetadas == 0) return Results.NotFound("Serviço não encontrado");
 
       return Results.NoContent();
     }
