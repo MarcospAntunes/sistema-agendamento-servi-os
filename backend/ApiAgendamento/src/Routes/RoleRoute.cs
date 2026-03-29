@@ -17,15 +17,15 @@ namespace Routes
     )
     {
       var roleVerify = VerifyRole.IsAdmin(user);
-      if (!roleVerify) return Results.Forbid();
+      if (!roleVerify) return ResultsHelper.Forbidden("Acesso negado");
 
-      if (string.IsNullOrWhiteSpace(dto.Role)) return Results.BadRequest("Nome da role é obrigatório");
+      if (string.IsNullOrWhiteSpace(dto.Role)) return ResultsHelper.BadRequest("Nome da role é obrigatório");
 
       Role role = new Role { role = dto.Role };
       db.Add(role);
       await db.SaveChangesAsync();
 
-      return Results.Created($"/roles/{role.id}", role);
+      return ResultsHelper.Created(role, role.id, "/roles", "Role criada com sucesso");
     }
 
     public static async Task<IResult> ChangeRoleName(
@@ -35,17 +35,17 @@ namespace Routes
     )
     {
       var roleVerify = VerifyRole.IsAdmin(user);
-      if (!roleVerify) return Results.Forbid();
+      if (!roleVerify) return ResultsHelper.Forbidden("Acesso negado");
 
       var role = await db.roles.FindAsync(dto.Id);
 
-      if (role is null) return Results.NotFound("Role não encontrado");
+      if (role is null) return ResultsHelper.NotFound("Role não encontrado");
 
       role.role = dto.Role;
 
       await db.SaveChangesAsync();
 
-      return Results.Ok("Role editado com sucesso");
+      return ResultsHelper.Success(role, "Role editado com sucesso");
     }
 
     public static async Task<IResult> DeleteRole(
@@ -55,11 +55,11 @@ namespace Routes
     )
     {
       var roleVerify = VerifyRole.IsAdmin(user);
-      if (!roleVerify) return Results.Forbid();
+      if (!roleVerify) return ResultsHelper.Forbidden("Acesso negado");
 
       var linhasAfetadas = await db.roles.Where(role => role.id == id).ExecuteDeleteAsync();
 
-      if (linhasAfetadas == 0) return Results.NotFound("Role não encontrado");
+      if (linhasAfetadas == 0) return ResultsHelper.NotFound("Role não encontrado");
 
       return Results.NoContent();
     }

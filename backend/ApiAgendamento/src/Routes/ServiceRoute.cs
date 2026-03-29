@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Constants;
 using Data;
 using DTOs;
 using Helpers;
@@ -16,7 +15,7 @@ namespace Routes
     {
       var servicies = await db.services.ToListAsync();
 
-      return Results.Ok(servicies);
+      return ResultsHelper.Success(servicies, "Serviços listados");
     }
 
     public static async Task<IResult> GetServiceById(
@@ -26,8 +25,8 @@ namespace Routes
     {
       var service = await db.services.FindAsync(id);
 
-      if(service is null) return Results.NotFound("Serviço não encontrado");
-      return Results.Ok(service);
+      if(service is null) return ResultsHelper.NotFound("Serviço não encontrado");
+      return ResultsHelper.Success(service, "Serviço encontrado");
     }
 
     public static async Task<IResult> CreateService(
@@ -37,7 +36,7 @@ namespace Routes
     )
     {
       var roleVerify = VerifyRole.IsAdmin(user);
-      if(!roleVerify) return Results.Forbid();
+      if(!roleVerify) return ResultsHelper.Forbidden("Acesso negado");
 
       Service service = new Service
       {
@@ -50,7 +49,7 @@ namespace Routes
       db.Add(service);
       await db.SaveChangesAsync();
 
-      return Results.Created($"/services/{service.id}", service);
+      return ResultsHelper.Created(service, service.id, "/services", "Serviço criado com sucesso");
     }
 
     public static async Task<IResult> UpdateService(
@@ -61,11 +60,11 @@ namespace Routes
     )
     {
       var roleVerify = VerifyRole.IsAdmin(user);
-      if(!roleVerify) return Results.Forbid();
+      if(!roleVerify) return ResultsHelper.Forbidden("Acesso negado");
 
       var service = await db.services.FindAsync(id);
 
-      if(service is null) return Results.NotFound("Serviço não encontrado");
+      if(service is null) return ResultsHelper.NotFound("Serviço não encontrado");
       
       if(!string.IsNullOrWhiteSpace(dto.Nome)) service.nome = dto.Nome;
       if(!string.IsNullOrWhiteSpace(dto.Descricao))service.descricao = dto.Descricao;
@@ -74,7 +73,7 @@ namespace Routes
 
       await db.SaveChangesAsync();
 
-      return Results.Ok("Serviço atualizado");
+      return ResultsHelper.Success("Serviço atualizado");
     }
 
     public static async Task<IResult> DeleteService(
@@ -84,13 +83,13 @@ namespace Routes
     )
     {
       var roleVerify = VerifyRole.IsAdmin(user);
-      if(!roleVerify) return Results.Forbid();
+      if(!roleVerify) return ResultsHelper.Forbidden("Acesso negado");
 
       var linhasAfetadas = await db.services
       .Where(service => service.id == id)
       .ExecuteDeleteAsync();
 
-      if(linhasAfetadas == 0) return Results.NotFound("Serviço não encontrado");
+      if(linhasAfetadas == 0) return ResultsHelper.NotFound("Serviço não encontrado");
 
       return Results.NoContent();
     }

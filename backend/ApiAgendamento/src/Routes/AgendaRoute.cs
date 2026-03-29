@@ -17,12 +17,12 @@ namespace Routes
     )
     {
       var busy = await db.agenda.AnyAsync(a => a.data_hora == data_hora && a.service_id == service_id);
-      if (busy) return Results.BadRequest("Horário indisponível");
+      if (busy) return ResultsHelper.BadRequest("Horário indisponível");
 
       var service = await db.services.FindAsync(service_id);
-      if (service is null) return Results.NotFound("Serviço inexistente");
+      if (service is null) return ResultsHelper.NotFound("Serviço inexistente");
 
-      if (data_hora <= DateTime.Now) return Results.BadRequest("Data inválida");
+      if (data_hora <= DateTime.Now) return ResultsHelper.BadRequest("Data inválida");
 
       var endOfService = data_hora.AddMinutes(service.duracao_min);
       var conflict = await db.agenda.AnyAsync(a =>
@@ -30,7 +30,8 @@ namespace Routes
         a.data_hora < endOfService &&
         a.data_hora.AddMinutes(a.duracao_min) > data_hora
       );
-      if (conflict) return Results.BadRequest("Já existe um serviço agendado neste horário");
+      
+      if (conflict) return ResultsHelper.BadRequest("Já existe um serviço agendado neste horário");
 
       Agenda agendamento = new Agenda
       {
@@ -43,7 +44,7 @@ namespace Routes
       db.Add(agendamento);
       await db.SaveChangesAsync();
 
-      return Results.Created($"/agendamento/{agendamento.id}", agendamento);
+      return ResultsHelper.Created(agendamento, agendamento.id, "/agendamentos", "Agendamento criado com sucesso");
     }
 
     public static async Task<IResult> GetAllAgendamentos(
@@ -64,7 +65,7 @@ namespace Routes
           .ToList();
       }
 
-      return Results.Ok(agendamentos);
+      return ResultsHelper.Success(agendamentos, "Agendamentos listados com sucesso");
     }
 
     public static async Task<IResult> GetAgendamentoByUser(
@@ -77,7 +78,7 @@ namespace Routes
       .OrderByDescending(agendamento => agendamento.data_hora)
       .ToListAsync();
 
-      return agendamentos.Any() ? Results.Ok(agendamentos) : Results.NotFound();
+      return agendamentos.Any() ? ResultsHelper.Success(agendamentos, "Agendamentos encontrados") : ResultsHelper.NotFound("Nenhum agendamento encontrado");
     }
 
     public static async Task<IResult> GetAgendamentoByService(
@@ -90,7 +91,7 @@ namespace Routes
       .OrderByDescending(agendamento => agendamento.data_hora)
       .ToListAsync();
 
-      return agendamentos.Any() ? Results.Ok(agendamentos) : Results.NotFound();
+      return agendamentos.Any() ? ResultsHelper.Success(agendamentos, "Agendamentos encontrados") : ResultsHelper.NotFound("Nenhum agendamento encontrado");
     }
 
     public static async Task<IResult> GetAgendamentosByDate(
@@ -109,7 +110,7 @@ namespace Routes
       .OrderBy(agendamento => agendamento.data_hora)
       .ToListAsync();
 
-      return agendamentos.Any() ? Results.Ok(agendamentos) : Results.NotFound();
+      return agendamentos.Any() ? ResultsHelper.Success(agendamentos, "Agendamentos encontrados") : ResultsHelper.NotFound("Nenhum agendamento encontrado");
     }
 
     public static async Task<IResult> ChangeDateTimeAgendamento(
@@ -120,7 +121,7 @@ namespace Routes
     {
       var agendamento = await db.agenda.FindAsync(id);
 
-      if (agendamento is null) return Results.NotFound("Agendamento não encontrado");
+      if (agendamento is null) return ResultsHelper.NotFound("Agendamento não encontrado");
 
       var endOfService = new_date.AddMinutes(agendamento.duracao_min);
 
@@ -134,14 +135,14 @@ namespace Routes
         );
 
       var service = await db.services.FindAsync(agendamento.service_id);
-      if (service is null) return Results.NotFound("Serviço inexistente");
+      if (service is null) return ResultsHelper.NotFound("Serviço não encontrado");
 
-      if (new_date <= DateTime.Now) return Results.BadRequest("Data inválida");
+      if (new_date <= DateTime.Now) return ResultsHelper.BadRequest("Data inválida");
 
       agendamento.data_hora = new_date;
       await db.SaveChangesAsync();
 
-      return Results.Ok(agendamento);
+      return ResultsHelper.Success(agendamento, "Agendamento atualizado com sucesso");
     }
 
     public static async Task<IResult> DeleteAgendamento(
@@ -153,15 +154,15 @@ namespace Routes
       var userId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)!.Value);
       var agendamento = await db.agenda.FindAsync(id);
 
-      if (agendamento?.user_id != userId && !VerifyRole.IsAdmin(user)) return Results.Forbid();
+      if (agendamento?.user_id != userId && !VerifyRole.IsAdmin(user)) return ResultsHelper.Forbidden("Acesso negado");
 
       var linhasAfetadas = await db.agenda
         .Where(a => a.id == id)
         .ExecuteDeleteAsync();
 
-      if (linhasAfetadas == 0) return Results.NotFound("Agendamento não encontrado.");
+      if (linhasAfetadas == 0) return ResultsHelper.NotFound("Agendamento não encontrado");
 
-      return Results.Ok("Agendamento cancelado");
+      return ResultsHelper.Success((object?)null, "Agendamento cancelado");
     }
   }
 }
