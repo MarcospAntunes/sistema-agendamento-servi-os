@@ -49,11 +49,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization(options =>
 {
-  options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, Roles.Admin));
+  options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, Roles.Admin)); //Rotas com este Require somente irão ser acessadas pelo admin
   options.AddPolicy("AtendenteOrAdmin", policy => policy.RequireAssertion(context =>
     context.User.HasClaim(ClaimTypes.Role, Roles.Admin)
     || context.User.HasClaim(ClaimTypes.Role, Roles.Atendente)
-  ));
+  )); //Rotas com esse require poderão ser acessadas pelo atendente ou admin
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -72,6 +72,7 @@ app.UseAuthorization(); // Verifica o .RequireAutorization()
 
 
 
+//Configuração do Swagger
 app.UseOpenApi();
 app.UseSwaggerUi(config =>
 {

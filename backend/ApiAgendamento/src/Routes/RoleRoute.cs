@@ -16,8 +16,7 @@ namespace Routes
       ClaimsPrincipal user
     )
     {
-      var roleVerify = VerifyRole.IsAdmin(user);
-      if (!roleVerify) return ResultsHelper.Forbidden("Acesso negado");
+      if (!VerifyRole.IsAdmin(user)) return ResultsHelper.Forbidden("Acesso negado");
 
       if (string.IsNullOrWhiteSpace(dto.Role)) return ResultsHelper.BadRequest("Nome da role é obrigatório");
 
@@ -34,17 +33,14 @@ namespace Routes
       [FromBody] UpdateRoleDTO dto
     )
     {
-      var roleVerify = VerifyRole.IsAdmin(user);
-      if (!roleVerify) return ResultsHelper.Forbidden("Acesso negado");
+      if (!VerifyRole.IsAdmin(user)) return ResultsHelper.Forbidden("Acesso negado");
 
       var role = await db.roles.FindAsync(dto.Id);
-
       if (role is null) return ResultsHelper.NotFound("Role não encontrado");
 
       role.role = dto.Role;
 
       await db.SaveChangesAsync();
-
       return ResultsHelper.Success(role, "Role editado com sucesso");
     }
 
@@ -54,11 +50,9 @@ namespace Routes
       int id
     )
     {
-      var roleVerify = VerifyRole.IsAdmin(user);
-      if (!roleVerify) return ResultsHelper.Forbidden("Acesso negado");
+      if (!VerifyRole.IsAdmin(user)) return ResultsHelper.Forbidden("Acesso negado");
 
       var linhasAfetadas = await db.roles.Where(role => role.id == id).ExecuteDeleteAsync();
-
       if (linhasAfetadas == 0) return ResultsHelper.NotFound("Role não encontrado");
 
       return Results.NoContent();

@@ -25,11 +25,12 @@ namespace Routes
       if (data_hora <= DateTime.Now) return ResultsHelper.BadRequest("Data inválida");
 
       var endOfService = data_hora.AddMinutes(service.duracao_min);
-      var conflict = await db.agenda.AnyAsync(a =>
-        a.service_id == service_id &&
-        a.data_hora < endOfService &&
-        a.data_hora.AddMinutes(a.duracao_min) > data_hora
-      );
+      var conflict = await db.agenda
+        .AnyAsync(a =>
+          a.service_id == service_id &&
+          a.data_hora < endOfService &&
+          a.data_hora.AddMinutes(a.duracao_min) > data_hora
+        );
       
       if (conflict) return ResultsHelper.BadRequest("Já existe um serviço agendado neste horário");
 
@@ -120,13 +121,10 @@ namespace Routes
     )
     {
       var agendamento = await db.agenda.FindAsync(id);
-
       if (agendamento is null) return ResultsHelper.NotFound("Agendamento não encontrado");
 
       var endOfService = new_date.AddMinutes(agendamento.duracao_min);
-
       var conflict = await db.agenda
-        .Include(a => a.duracao_min)
         .AnyAsync(a =>
           a.id != id &&
           a.service_id == agendamento.service_id &&
