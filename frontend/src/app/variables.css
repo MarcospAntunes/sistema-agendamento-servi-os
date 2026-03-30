@@ -1,0 +1,7 @@
+:root {
+  --section-primary-gradient: linear-gratient(to bottom right, #eff6ff, #ffffff);
+  --section-primary-color: #ffffff;
+  --section-secondary-color: #f9fafb;
+  --blue-600: #2563eb;
+  --blue-100: #dbeafe;
+}
