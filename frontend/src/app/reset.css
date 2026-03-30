@@ -58,6 +58,6 @@ textarea {
   resize: none;
 }
 
-header, main, footer {
+header, section, footer {
   padding: 20px 50px;
 }

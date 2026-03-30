@@ -1,7 +1,7 @@
 :root {
   --primary-color: #ffffff;
 
-  --section-gradient: linear-gratient(to bottom right, #eff6ff, #ffffff);
+  --section-gradient: linear-gradient(to bottom right, #eff6ff, #ffffff);
   --section-color: #f9fafb;
 
   --blue-600: #2563eb;
@@ -10,4 +10,8 @@
   --text-secondary-color: #717182;
 
   --bg-gray: #E9EBEF;
+  
+  --border-color: hsl(240 5.9% 90%);
+
+  --box-shadow-3D-effect: 0 20px 50px rgba(0, 0, 0, 0.2);
 }
