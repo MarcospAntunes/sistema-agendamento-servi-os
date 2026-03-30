@@ -12,7 +12,8 @@ html, body {
 }
 
 body {
-  font-family: sans-serif;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -55,4 +56,8 @@ table {
 
 textarea {
   resize: none;
+}
+
+header, main, footer {
+  padding: 20px 50px;
 }
