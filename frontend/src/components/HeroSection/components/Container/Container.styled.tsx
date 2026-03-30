@@ -3,7 +3,6 @@ import styled from "styled-components";
 const Container = styled.div`
   display: flex;
   gap: 16px;
-  margin-top: 50px;
   padding: 15px 0;
 
   & button:first-of-type {

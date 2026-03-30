@@ -11,6 +11,8 @@ const HeaderStyled = styled.header`
 
   & div {
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 5px;
 
     & h1 {
@@ -27,7 +29,7 @@ const HeaderStyled = styled.header`
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: 28px;
 
     & button {
       background-color: var(--bg-gray);
