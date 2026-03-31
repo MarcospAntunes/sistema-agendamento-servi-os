@@ -1,4 +1,11 @@
-import { Header, HeroSection, AboutSection, ServicesSection, ContactSection } from "@/components/index";
+import {
+  Header,
+  HeroSection,
+  AboutSection,
+  ServicesSection,
+  ContactSection,
+  Footer,
+} from "@/components/index";
 
 export default function Home() {
   return (
@@ -9,6 +16,7 @@ export default function Home() {
         <AboutSection />
         <ServicesSection />
         <ContactSection />
+        <Footer />
       </main>
     </>
   );

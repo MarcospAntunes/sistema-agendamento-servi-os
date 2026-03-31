@@ -12,8 +12,10 @@
   --bg-gray-lighter: oklch(98.5% 0.002 247.839);
   --bg-gray: #E9EBEF;
   --bg-gray-darker: rgba(0, 0, 0, 0.1);
+  --bg-footer: #030213;
   
   --border-color: hsl(240 5.9% 90%);
+  --border-color-darker: color-mix(in oklab, oklch(1 0 0) 20%, transparent);
 
   --box-shadow-3D-effect: 0 20px 50px rgba(0, 0, 0, 0.2);
 }

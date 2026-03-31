@@ -3,6 +3,7 @@ import HeroSection from "./HeroSection/HeroSection"
 import AboutSection from "./AboutSection/AboutSection";
 import ServicesSection from "./ServicesSection/ServicesSection";
 import ContactSection from "./ContactSection/ContactSection";
+import Footer from "./Footer/Footer";
 
 export {
   Header, 
@@ -10,4 +11,5 @@ export {
   AboutSection, 
   ServicesSection, 
   ContactSection,
+  Footer,
 }
