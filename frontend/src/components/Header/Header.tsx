@@ -1,3 +1,4 @@
+import { MenuMobile, MenuMobileButton } from './components';
 import HeaderStyled from './Header.style';
 
 export default function Header() {
@@ -8,6 +9,7 @@ export default function Header() {
         <span>Consultório Odontológico</span>
       </div>
 
+      <MenuMobile />
       <nav>
         <a href="#">Início</a>
         <a href="#">Sobre</a>
@@ -16,6 +18,7 @@ export default function Header() {
 
         <button>Agendar Consulta</button>
       </nav>
+      <MenuMobileButton />
     </HeaderStyled>
   )
 }

@@ -10,7 +10,7 @@ const HeaderStyled = styled.header`
   box-shadow: 0 0 1px 0.5px 0.5px gray;
   z-index: 999;
 
-  & div {
+  & > div {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,18 +27,24 @@ const HeaderStyled = styled.header`
   }
 
   & nav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 28px;
-
     & button {
       background-color: var(--bg-gray);
       border-radius: 5px;
       padding: 7px 14px;
       font-size: 12px;
       font-weight: bold;
+    }
+  }
+
+  & nav:last-of-type {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 28px;
+
+    @media screen and (max-width: 541px) {
+      display: none;
     }
   }
 `;
