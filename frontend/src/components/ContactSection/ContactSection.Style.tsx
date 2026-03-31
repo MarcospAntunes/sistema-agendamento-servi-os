@@ -10,6 +10,7 @@ const ContactSectionStyled = styled.section`
   & > div {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap-reverse;
     gap: 21px;
 
     & > div:first-of-type {
@@ -64,6 +65,7 @@ const ContactSectionStyled = styled.section`
     fieldset {
       display: flex;
       gap: 21px;
+      flex-wrap: wrap;
       border: none;
     }
 
@@ -71,6 +73,11 @@ const ContactSectionStyled = styled.section`
       display: flex;
       flex-direction: column;
       gap: 8px;
+      width: 100%;
+
+      @media screen and (min-width: 541px) {
+        width: auto;
+      }
     }
 
     input {
