@@ -26,12 +26,6 @@ const HeroSectionStyled = styled.section`
       box-shadow: var(--box-shadow-3D-effect)
     }
 
-    & > p:first-of-type {
-      max-width: 470px;
-      font-size: 16px;
-      color: var(--text-secondary-color);
-    }
-
     & h1 {
       font-weight: bold;
       font-size: 42px;

@@ -1,10 +1,12 @@
-import { Container, Card, FloatingContent } from "./components";
+import { Container, FloatingContent } from "./components";
 import HeroSectionStyled from "./HeroSection.styled";
 import Image from "next/image";
 import { GoPeople } from "react-icons/go";
 import { FaRegStar } from "react-icons/fa";
 import { PiMedalLight } from "react-icons/pi";
 import { FiClock } from "react-icons/fi";
+import Subtitle from "../Subtitle/Subtitle";
+import Card from "../Card/Card";
 
 export default function HeroSection() {
   return (
@@ -13,11 +15,11 @@ export default function HeroSection() {
         <h1>
           Seu sorriso é nossa <span>prioridade</span>
         </h1>
-        <p>
-          Oferecemos tratamentos odontológicos de excelência com tecnologia
+        <Subtitle
+          text="Oferecemos tratamentos odontológicos de excelência com tecnologia
           moderna e atendimento humanizado. Cuidamos da saúde do seu sorriso com
-          carinho e profissionalismo.
-        </p>
+          carinho e profissionalismo."
+        />
         <Container>
           <button>Agendar Consulta</button>
           <button>Ver Serviços</button>
