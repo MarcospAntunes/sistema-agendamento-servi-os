@@ -9,7 +9,9 @@
 
   --text-secondary-color: #717182;
 
+  --bg-gray-lighter: oklch(98.5% 0.002 247.839);
   --bg-gray: #E9EBEF;
+  --bg-gray-darker: rgba(0, 0, 0, 0.1);
   
   --border-color: hsl(240 5.9% 90%);
 
