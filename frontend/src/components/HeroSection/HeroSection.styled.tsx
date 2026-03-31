@@ -4,6 +4,7 @@ const HeroSectionStyled = styled.section`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   gap: 20px;
   width: 100vw;
   padding: 70px 0;

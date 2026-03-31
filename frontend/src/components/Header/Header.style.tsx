@@ -8,6 +8,7 @@ const HeaderStyled = styled.header`
   justify-content: space-between;
   background-color: var(--primary-color);
   box-shadow: 0 0 1px 0.5px 0.5px gray;
+  z-index: 999;
 
   & div {
     display: flex;
@@ -29,6 +30,7 @@ const HeaderStyled = styled.header`
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
     gap: 28px;
 
     & button {
