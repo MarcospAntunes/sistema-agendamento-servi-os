@@ -18,6 +18,7 @@ const ServicesSectionStyled = styled.section`
     flex-wrap: wrap;
     gap: 32px;
     margin-top: 64px;
+    max-width: 1200px;
   }
 
   & > div:last-of-type {
