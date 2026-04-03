@@ -1,3 +1,4 @@
+import { Fragment } from "react/jsx-runtime";
 import CardContactsStyled from "./CardContacts.style";
 import CardContactsTypes from "./CardContacts.type";
 
@@ -9,10 +10,10 @@ export default function CardContacts({ Icon, text, title }: CardContactsTypes) {
         <h4>{title}</h4>
         <p>
           {text.map((item, index) => (
-            <>
+            <Fragment key={index}>
               {item}
-              <br key={index} />
-            </>
+              <br />
+            </Fragment>
           ))}
         </p>
       </div>
