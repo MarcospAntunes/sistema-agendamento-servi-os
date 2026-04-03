@@ -73,14 +73,17 @@ app.UseAuthorization(); // Verifica o .RequireAutorization()
 
 
 //Configuração do Swagger
-app.UseOpenApi();
-app.UseSwaggerUi(config =>
+if (app.Environment.IsDevelopment())
 {
-  config.DocumentTitle = "AgendamentoAPI";
-  config.Path = "/swagger";
-  config.DocumentPath = "/swagger/{documentName}/swagger.json";
-  config.DocExpansion = "list";
-});
+  app.UseOpenApi();
+  app.UseSwaggerUi(config =>
+  {
+    config.DocumentTitle = "AgendamentoAPI";
+    config.Path = "/swagger";
+    config.DocumentPath = "/swagger/{documentName}/swagger.json";
+    config.DocExpansion = "list";
+  });
+}
 
 // Rotas GET
 app.MapGet("/users/{id}", UserRoute.GetUserById);
