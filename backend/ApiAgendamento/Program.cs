@@ -102,13 +102,11 @@ app.MapPost("/services", ServiceRoute.CreateService).RequireAuthorization("Admin
 app.MapPost("/agendamentos", AgendaRoute.CreateAgendamento).RequireAuthorization();
 app.MapPost("/roles", RoleRoute.CreateRole).RequireAuthorization("AdminOnly");
 
-// Rotas PUT
-app.MapPut("/agendamentos/{id}", AgendaRoute.ChangeDateTimeAgendamento).RequireAuthorization();
-app.MapPut("/roles/{id}", RoleRoute.ChangeRoleName).RequireAuthorization("AdminOnly");
-
 // Rotas PATCH
 app.MapPatch("/services/{id}", ServiceRoute.UpdateService).RequireAuthorization("AdminOnly");
 app.MapPatch("/users/{id}", UserRoute.UpdateUser).RequireAuthorization();
+app.MapPatch("/roles/{id}", RoleRoute.ChangeRoleName).RequireAuthorization("AdminOnly");
+app.MapPatch("/agendamentos/{id}", AgendaRoute.ChangeDateTimeAgendamento).RequireAuthorization();
 
 // Rotas DELETE
 app.MapDelete("/services/{id}", ServiceRoute.DeleteService).RequireAuthorization("AdminOnly");

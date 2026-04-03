@@ -12,7 +12,7 @@ namespace Routes
   {
     public static async Task<IResult> CreateRole(
       [FromServices] ConsultorioDbContext db,
-      [FromBody] CreateRoleDTO dto,
+      [FromBody] RoleDTO dto,
       ClaimsPrincipal user
     )
     {
@@ -30,12 +30,13 @@ namespace Routes
     public static async Task<IResult> ChangeRoleName(
       [FromServices] ConsultorioDbContext db,
       ClaimsPrincipal user,
-      [FromBody] UpdateRoleDTO dto
+      [FromBody] RoleDTO dto,
+      int id
     )
     {
       if (!VerifyRole.IsAdmin(user)) return ResultsHelper.Forbidden("Acesso negado");
 
-      var role = await db.roles.FindAsync(dto.Id);
+      var role = await db.roles.FindAsync(id);
       if (role is null) return ResultsHelper.NotFound("Role não encontrado");
 
       role.role = dto.Role;
