@@ -93,7 +93,7 @@ namespace Routes
 
     public static async Task<IResult> UpdateUser(
       [FromServices] ConsultorioDbContext db,
-      [FromBody] CreateUserDTO dto,
+      [FromBody] PatchUserDTO dto,
       ClaimsPrincipal user,
       int id
     )

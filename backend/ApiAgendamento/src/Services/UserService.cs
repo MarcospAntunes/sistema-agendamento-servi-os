@@ -7,7 +7,7 @@ namespace Services
 {
   public static class UserService
   {
-    public static void UpdateFields(User user, CreateUserDTO dto)
+    public static void UpdateFields(User user, PatchUserDTO dto)
     {
       if (!string.IsNullOrWhiteSpace(dto.Email))
       {
