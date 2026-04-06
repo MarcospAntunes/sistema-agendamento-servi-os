@@ -64,9 +64,19 @@ builder.Services.AddOpenApiDocument(config =>
   config.Version = "v1";
 });
 
+//Configuração do Cors
+builder.Services.AddCors(options =>
+{
+  options.AddPolicy("myAllowSpecificOrigins", policy =>
+  {
+    policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+  });
+});
+
 WebApplication app = builder.Build(); // Constroi a aplicação
 app.UseExceptionHandler("/error");
 
+app.UseCors("myAllowSpecificOrigins"); // Ativa a política de Cors
 app.UseAuthentication(); // Lê o cookie e preenche o ClaimsPrincipal
 app.UseAuthorization(); // Verifica o .RequireAutorization()
 
@@ -86,32 +96,32 @@ if (app.Environment.IsDevelopment())
 }
 
 // Rotas GET
-app.MapGet("/users/{id}", UserRoute.GetUserById);
-app.MapGet("/services", ServiceRoute.GetAllServices);
-app.MapGet("/services/{id}", ServiceRoute.GetServiceById);
-app.MapGet("/agendamentos", AgendaRoute.GetAllAgendamentos).RequireAuthorization("AtendenteOrAdmin");
-app.MapGet("/agendamentos/user/{user_id}", AgendaRoute.GetAgendamentoByUser).RequireAuthorization();
-app.MapGet("/agendamentos/service/{service_id}", AgendaRoute.GetAgendamentoByService).RequireAuthorization();
-app.MapGet("/agendamentos/data/{date}", AgendaRoute.GetAgendamentosByDate).RequireAuthorization();
-app.MapGet("/users/me", UserRoute.GetUserLogged).RequireAuthorization();
+app.MapGet("/users/{id}", UserRoute.GetUserById).RequireCors("myAllowSpecificOrigins");
+app.MapGet("/services", ServiceRoute.GetAllServices).RequireCors("myAllowSpecificOrigins");
+app.MapGet("/services/{id}", ServiceRoute.GetServiceById).RequireCors("myAllowSpecificOrigins");
+app.MapGet("/agendamentos", AgendaRoute.GetAllAgendamentos).RequireAuthorization("AtendenteOrAdmin").RequireCors("myAllowSpecificOrigins");
+app.MapGet("/agendamentos/user/{user_id}", AgendaRoute.GetAgendamentoByUser).RequireAuthorization().RequireCors("myAllowSpecificOrigins");
+app.MapGet("/agendamentos/service/{service_id}", AgendaRoute.GetAgendamentoByService).RequireAuthorization().RequireCors("myAllowSpecificOrigins");
+app.MapGet("/agendamentos/data/{date}", AgendaRoute.GetAgendamentosByDate).RequireAuthorization().RequireCors("myAllowSpecificOrigins");
+app.MapGet("/users/me", UserRoute.GetUserLogged).RequireAuthorization().RequireCors("myAllowSpecificOrigins");
 
 // Rotas POST
-app.MapPost("/users/register", UserRoute.CreateUser);
-app.MapPost("/users/login", UserRoute.LoginUser);
-app.MapPost("/services", ServiceRoute.CreateService).RequireAuthorization("AdminOnly");
-app.MapPost("/agendamentos", AgendaRoute.CreateAgendamento).RequireAuthorization();
-app.MapPost("/roles", RoleRoute.CreateRole).RequireAuthorization("AdminOnly");
+app.MapPost("/users/register", UserRoute.CreateUser).RequireCors("myAllowSpecificOrigins");
+app.MapPost("/users/login", UserRoute.LoginUser).RequireCors("myAllowSpecificOrigins");
+app.MapPost("/services", ServiceRoute.CreateService).RequireAuthorization("AdminOnly").RequireCors("myAllowSpecificOrigins");
+app.MapPost("/agendamentos", AgendaRoute.CreateAgendamento).RequireAuthorization().RequireCors("myAllowSpecificOrigins");
+app.MapPost("/roles", RoleRoute.CreateRole).RequireAuthorization("AdminOnly").RequireCors("myAllowSpecificOrigins");
 
 // Rotas PATCH
-app.MapPatch("/services/{id}", ServiceRoute.UpdateService).RequireAuthorization("AdminOnly");
-app.MapPatch("/users/{id}", UserRoute.UpdateUser).RequireAuthorization();
-app.MapPatch("/roles/{id}", RoleRoute.ChangeRoleName).RequireAuthorization("AdminOnly");
-app.MapPatch("/agendamentos/{id}", AgendaRoute.ChangeDateTimeAgendamento).RequireAuthorization();
+app.MapPatch("/services/{id}", ServiceRoute.UpdateService).RequireAuthorization("AdminOnly").RequireCors("myAllowSpecificOrigins");
+app.MapPatch("/users/{id}", UserRoute.UpdateUser).RequireAuthorization().RequireCors("myAllowSpecificOrigins");
+app.MapPatch("/roles/{id}", RoleRoute.ChangeRoleName).RequireAuthorization("AdminOnly").RequireCors("myAllowSpecificOrigins");
+app.MapPatch("/agendamentos/{id}", AgendaRoute.ChangeDateTimeAgendamento).RequireAuthorization().RequireCors("myAllowSpecificOrigins");
 
 // Rotas DELETE
-app.MapDelete("/services/{id}", ServiceRoute.DeleteService).RequireAuthorization("AdminOnly");
-app.MapDelete("/users/{id}", UserRoute.DeleteUser).RequireAuthorization();
-app.MapDelete("/agendamentos/{id}", AgendaRoute.DeleteAgendamento).RequireAuthorization();
-app.MapDelete("/roles/{id}", RoleRoute.DeleteRole).RequireAuthorization("AdminOnly");
+app.MapDelete("/services/{id}", ServiceRoute.DeleteService).RequireAuthorization("AdminOnly").RequireCors("myAllowSpecificOrigins");
+app.MapDelete("/users/{id}", UserRoute.DeleteUser).RequireAuthorization().RequireCors("myAllowSpecificOrigins");
+app.MapDelete("/agendamentos/{id}", AgendaRoute.DeleteAgendamento).RequireAuthorization().RequireCors("myAllowSpecificOrigins");
+app.MapDelete("/roles/{id}", RoleRoute.DeleteRole).RequireAuthorization("AdminOnly").RequireCors("myAllowSpecificOrigins");
 
 app.Run(); //inicia a aplicação
