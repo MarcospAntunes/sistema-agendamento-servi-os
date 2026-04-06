@@ -10,6 +10,12 @@ namespace Data
     public DbSet<Agenda> agenda { get; set; }
     public DbSet<Role> roles { get; set; }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      modelBuilder.Entity<User>()
+        .Property(u => u.role_id)
+        .ValueGeneratedOnAdd();
+    }
     public ConsultorioDbContext(DbContextOptions<ConsultorioDbContext> options) : base(options) { }
   }
 }
