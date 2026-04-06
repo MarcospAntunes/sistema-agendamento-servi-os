@@ -1,7 +1,7 @@
 interface CreateUserParams {
   nome: string;
   email: string;
-  telefone: number;
+  telefone: string;
   password: string;
 }
 
@@ -29,7 +29,7 @@ interface PatchUserParams {
   id: number;
   nome?: string;
   email?: string;
-  telefone?: number;
+  telefone?: string;
   password?: string;
 }
 

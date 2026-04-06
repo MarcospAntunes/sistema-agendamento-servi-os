@@ -1,6 +1,7 @@
 import styled from "styled-components";
+import { ContainerTypes, FormStyledTypes } from "./Form.type";
 
-const Container = styled.div`
+const Container = styled.div<ContainerTypes>`
   display: flex;
   flex-direction: column;
   gap: 21px;
@@ -27,16 +28,42 @@ const Container = styled.div`
   }
 
   & ul {
-    list-style: disc;
+    list-style: none;
     padding: 0 21px;
+    color: var(--success-color);
 
     li::marker {
       color: var(--blue-600);
     }
+
+    li::before {
+      content: "";
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 10px;
+      background-image: url("/icons/success-mark-icon.svg");
+      background-repeat: no-repeat;
+      background-size: contain;
+      vertical-align: middle;
+    }
+
+    ${({ $errorPasswordId }) =>
+      $errorPasswordId.map(
+        (id) => `
+          #${id} {
+            color: var(--error-color);
+            text-decoration: underline;
+          }
+          #${id}::before {
+            background-image: url("/icons/error-mark-icon.svg");
+          }
+      `,
+      )}
   }
 `;
 
-const FormStyled = styled.form`
+const FormStyled = styled.form<FormStyledTypes>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -77,6 +104,26 @@ const FormStyled = styled.form`
     padding: 7px 14px;
     background-color: var(--blue-600);
     color: white;
+  }
+
+  input[type="password"] {
+    border: ${({ $errorPassword }) =>
+      $errorPassword ? "1px solid var(--error-color)" : "none"};
+  }
+
+  input[type="email"] {
+    border: ${({ $errorEmail }) =>
+      $errorEmail ? "1px solid var(--error-color)" : "none"};
+  }
+
+  input[type="tel"] {
+    border: ${({ $errorTelefone }) =>
+      $errorTelefone ? "1px solid var(--error-color)" : "none"};
+  }
+
+  input[type="text"] {
+    border: ${({ $errorName }) =>
+      $errorName ? "1px solid var(--error-color)" : "none"};
   }
 `;
 

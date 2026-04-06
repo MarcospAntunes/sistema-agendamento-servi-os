@@ -4,6 +4,7 @@ import AboutSection from "./AboutSection/AboutSection";
 import ServicesSection from "./ServicesSection/ServicesSection";
 import ContactSection from "./ContactSection/ContactSection";
 import Footer from "./Footer/Footer";
+import CustomAlert from "./CustomAlert/CustomAlert";
 
 export {
   Header, 
@@ -12,4 +13,5 @@ export {
   ServicesSection, 
   ContactSection,
   Footer,
+  CustomAlert,
 }

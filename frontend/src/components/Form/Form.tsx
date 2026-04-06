@@ -1,17 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useUserParams } from "@/hooks";
 import { Container, FormStyled } from "./Form.style";
 
 export default function Form() {
-  const [nome, setNome] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  
+  const {
+    nome,
+    email,
+    password,
+    telefone,
+    setEmail,
+    setNome,
+    setPassword,
+    setTelefone,
+    handleRegisterUser,
+    errorEmail,
+    errorName,
+    errorPassword,
+    errorTelefone,
+    errorPasswordId,
+  } = useUserParams();
+
   return (
-    <Container>
-      <FormStyled action="#">
+    <Container $errorPasswordId={errorPasswordId}>
+      <FormStyled
+        action="#"
+        onSubmit={(e) => e.preventDefault()}
+        $errorEmail={errorEmail}
+        $errorName={errorName}
+        $errorPassword={errorPassword}
+        $errorTelefone={errorTelefone}
+      >
         <legend>Agende sua consulta</legend>
         <fieldset>
           <label htmlFor="nome">
@@ -56,19 +75,24 @@ export default function Form() {
             minLength={8}
             maxLength={15}
             required
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </label>
 
-        <button type="submit">Registrar-se</button>
+        <button type="submit" onClick={handleRegisterUser}>
+          Registrar-se
+        </button>
       </FormStyled>
       <p>Sua senha deve atender os requisitos abaixo: </p>
       <ul>
-        <li>Deve conter pelo menos 1 caractere especial</li>
-        <li>Deve conter pelo menos 1 letra maiúscula</li>
-        <li>Deve conter pelo menos 1 número</li>
-        <li>Deve ter entre 8 e 15 caracteres</li>
+        <li id="special-caracter">
+          Deve conter pelo menos 1 caractere especial
+        </li>
+        <li id="upper-letter">Deve conter pelo menos 1 letra maiúscula</li>
+        <li id="down-letter">Deve conter pelo menos 1 letra minúscula</li>
+        <li id="number">Deve conter pelo menos 1 número</li>
+        <li id="caracters">Deve ter entre 8 e 15 caracteres</li>
       </ul>
     </Container>
   );
