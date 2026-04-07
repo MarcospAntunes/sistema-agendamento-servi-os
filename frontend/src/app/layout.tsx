@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./variables.css";
 import "./reset.css";
 import Providers from "./providers";
+import { CustomAlert } from "@/components";
+import StyledComponentsRegistry from "./lib/Registry";
 
 export const metadata: Metadata = {
   title: "DentalCare",
@@ -16,7 +18,12 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <Providers>{children}</Providers>
+        <StyledComponentsRegistry>
+          <Providers>
+            <CustomAlert />
+            {children}
+          </Providers>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );
