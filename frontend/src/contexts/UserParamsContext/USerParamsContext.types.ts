@@ -27,6 +27,9 @@ type UserParamsContextTypes = {
 
   errorPasswordId: string[];
   setErrorPasswordId: Dispatch<SetStateAction<string[]>>;
+
+  response: Record<string, unknown>; 
+  setResponse: Dispatch<SetStateAction<Record<string, unknown>>>;
 }
 
 export default UserParamsContextTypes;
