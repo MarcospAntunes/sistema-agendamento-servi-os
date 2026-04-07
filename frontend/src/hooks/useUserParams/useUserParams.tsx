@@ -1,7 +1,8 @@
 import { UserParamsContext } from "@/contexts/UserParamsContext/UserParamsContext";
 import { useContext, useEffect } from "react";
-import { RegisterUser } from "@/utils";
+import { LoginUser, RegisterUser } from "@/utils";
 import useAlert from "../useAlert/userAlert";
+import { refreshUser } from "@/services/api/getRoutes";
 
 export default function useUserParams() {
   const {
@@ -23,18 +24,46 @@ export default function useUserParams() {
     setErrorTelefone,
     errorPasswordId,
     setErrorPasswordId,
+    response,
+    setResponse,
   } = useContext(UserParamsContext);
 
-  const {setSuccess, setShow, setMessage} = useAlert();
+  const { setSuccess, setShow, setMessage } = useAlert();
 
   const handleRegisterUser = async () => {
     if (!errorEmail && !errorName && !errorPassword && !errorTelefone) {
       const res = await RegisterUser({ nome, telefone, email, password });
       setSuccess(res.success);
       setMessage(res.message);
-      
     } else console.log("Error");
     setShow(true);
+  };
+
+  const handleLoginUser = async () => {
+    if (!errorEmail && !errorPassword) {
+      const res = await LoginUser({ email, password });
+      setSuccess(res.success);
+      setMessage(res.message);
+      setResponse(res);
+    } else console.log("Error");
+    setShow(true);
+  };
+
+  const handleVerifyUser = async () => {
+    try {
+      const res = await refreshUser();
+      if (res.success) {
+        const user = res.data;
+        setEmail(user.email);
+        setNome(user.nome);
+        setTelefone(user.telefone);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
   };
 
   const checkPassword = () => {
@@ -111,5 +140,9 @@ export default function useUserParams() {
     setErrorTelefone,
     handleRegisterUser,
     errorPasswordId,
+    handleLoginUser,
+    response,
+    setResponse,
+    handleVerifyUser,
   };
 }
