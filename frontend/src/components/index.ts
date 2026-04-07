@@ -5,6 +5,8 @@ import ServicesSection from "./ServicesSection/ServicesSection";
 import ContactSection from "./ContactSection/ContactSection";
 import Footer from "./Footer/Footer";
 import CustomAlert from "./CustomAlert/CustomAlert";
+import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
+import LoginForm from "./LoginForm/LoginForm";
 
 export {
   Header, 
@@ -14,4 +16,6 @@ export {
   ContactSection,
   Footer,
   CustomAlert,
+  ProtectedRoute,
+  LoginForm,
 }
