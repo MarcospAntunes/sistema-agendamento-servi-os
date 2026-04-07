@@ -19,6 +19,7 @@ function UserParamsProvider({ children }: Children) {
   const [password, setPassword] = useState("");
   const [errorPassword, setErrorPassword] = useState(true);
   const [errorPasswordId, setErrorPasswordId] = useState([""]);
+  const [response, setResponse] = useState({});
   
   return (
     <UserParamsContext.Provider
@@ -40,7 +41,9 @@ function UserParamsProvider({ children }: Children) {
         errorTelefone,
         setErrorTelefone,
         errorPasswordId,
-        setErrorPasswordId
+        setErrorPasswordId,
+        response, 
+        setResponse
       }}
     >
       {children}
