@@ -47,6 +47,13 @@ const HeaderStyled = styled.header`
       display: none;
     }
   }
+
+  svg {
+    width: 32px;
+    height: 32px;
+    margin: 0 10px;
+    cursor: pointer;
+  }
 `;
 
 export default HeaderStyled;
